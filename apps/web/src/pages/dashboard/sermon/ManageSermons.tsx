@@ -32,6 +32,8 @@ export default function ManageSermons() {
   const sermonId = searchParams.get("id");
   const navigate = useNavigate();
 
+  const [currentSermon, setCurrentSermon] = useState<Sermon | null>(null);
+
   const BACKEND_URL = "http://localhost:3000";
 
   const isYouTube = (url: string) => url.includes("youtube.com") || url.includes("youtu.be");
@@ -59,6 +61,7 @@ export default function ManageSermons() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setSermons(res.data);
+        if (res.data.length > 0) setCurrentSermon(res.data[0]);
       } catch (err) {
         console.error(err);
       } finally {
@@ -130,6 +133,7 @@ export default function ManageSermons() {
     try {
       await axios.delete(`/sermons/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setSermons(prev => prev.filter(s => s.id !== id));
+      if (currentSermon?.id === id) setCurrentSermon(null);
     } catch (err) {
       console.error(err);
       alert("Impossible de supprimer la prédication.");
@@ -138,6 +142,8 @@ export default function ManageSermons() {
 
   const filteredSermons = filter === "ALL" ? sermons : sermons.filter(s => s.type === filter);
 
+  if (loading) return <p className="text-center mt-10 text-gray-600">Chargement...</p>;
+
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar role={user?.roles[0] || ""} />
@@ -145,6 +151,7 @@ export default function ManageSermons() {
         <Topbar />
 
         <main className="p-6 max-w-7xl mx-auto flex-1">
+
           <h1 className="text-3xl font-bold mb-6">Gérer les Prédications</h1>
 
           {/* Formulaire */}
@@ -164,7 +171,9 @@ export default function ManageSermons() {
                 <source src={preview} type="audio/mpeg" />
               </audio>
             ) : null}
-            <button onClick={submit} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"> {sermonId ? "Modifier" : "Ajouter"} </button>
+            <button onClick={submit} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+              {sermonId ? "Modifier" : "Ajouter"}
+            </button>
           </div>
 
           {/* Filtre */}
@@ -176,16 +185,31 @@ export default function ManageSermons() {
             ))}
           </div>
 
-          {/* Grille responsive 1/2/3 colonnes */}
+          {/* Player principal */}
+          {currentSermon && (
+            <div className="mb-6 bg-gray-900 text-white rounded-lg shadow-lg p-4">
+              <h2 className="text-2xl font-semibold mb-2">{currentSermon.title}</h2>
+              {currentSermon.description && <p className="text-gray-300 mb-4">{currentSermon.description}</p>}
+              {currentSermon.type === "VIDEO" ? (
+                <iframe className="w-full aspect-video rounded-md" src={getEmbedUrl(currentSermon.url)} title={currentSermon.title} allowFullScreen />
+              ) : (
+                <audio controls className="w-full rounded-md">
+                  <source src={currentSermon.url} type="audio/mpeg" />
+                </audio>
+              )}
+            </div>
+          )}
+
+          {/* Grille */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSermons.map(s => (
-              <div key={s.id} className="bg-white rounded-lg shadow-md overflow-hidden group relative hover:shadow-xl transition">
-                {s.type==="VIDEO" ? (
+              <div key={s.id} className="bg-white rounded-lg shadow-md overflow-hidden group relative hover:shadow-xl transition cursor-pointer"
+                   onClick={() => setCurrentSermon(s)}>
+                {s.type === "VIDEO" ? (
                   <iframe className="w-full aspect-video" src={getEmbedUrl(s.url)} title={s.title} allowFullScreen />
                 ) : (
-                  <audio controls className="w-full p-2"><source src={s.url} type="audio/mpeg" /></audio>
+                  <audio controls className="w-full p-2" onPlay={e => e.currentTarget.pause()}><source src={s.url} type="audio/mpeg" /></audio>
                 )}
-
                 <div className="p-4">
                   <h3 className="font-semibold">{s.title}</h3>
                   {s.description && <p className="text-gray-500 text-sm">{s.description}</p>}
@@ -194,8 +218,12 @@ export default function ManageSermons() {
                 {/* Admin buttons */}
                 {user?.roles.includes("ADMIN") && (
                   <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                    <button className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white" onClick={() => navigate(`/dashboard/manage-sermons?id=${s.id}`)}><PencilIcon className="w-5 h-5"/></button>
-                    <button className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white" onClick={() => handleDelete(s.id)}><TrashIcon className="w-5 h-5"/></button>
+                    <button className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white" onClick={e => {e.stopPropagation(); navigate(`/dashboard/manage-sermons?id=${s.id}`)}}>
+                      <PencilIcon className="w-5 h-5"/>
+                    </button>
+                    <button className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white" onClick={e => {e.stopPropagation(); handleDelete(s.id)}}>
+                      <TrashIcon className="w-5 h-5"/>
+                    </button>
                   </div>
                 )}
               </div>
