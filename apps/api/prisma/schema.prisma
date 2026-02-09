@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Church {
+  id             String    @id @default(cuid())
+  name           String
+  logoUrl        String?
+  agreementNo    String?
+  pastorName     String
+  foundedAt      DateTime
+  country        String
+  city           String
+  address        String
+
+  users          User[]
+  members        Member[]
+  sermons        Sermon[]   // <-- Ajout des prédications
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  church    Church     @relation(fields: [churchId], references: [id])
+  churchId  String
+  roles     UserRole[] // relation vers la table pivot UserRole
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Member {
+  id         String   @id @default(cuid())
+  firstName  String
+  lastName   String
+  email      String?  @unique
+  phone      String?
+  church     Church   @relation(fields: [churchId], references: [id])
+  churchId   String
+  joinedAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// Table des rôles
+model Role {
+  id    String     @id @default(cuid())
+  name  String     @unique
+  users UserRole[]
+}
+
+// Table pivot pour les rôles des utilisateurs (N:N)
+model UserRole {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  role   Role   @relation(fields: [roleId], references: [id])
+  roleId String
+
+  @@unique([userId, roleId])
+}
+
+// 🔹 Modèle pour les prédications
+model Sermon {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  type        MediaType
+  url         String    // Lien vers le fichier audio/vidéo
+  church      Church    @relation(fields: [churchId], references: [id])
+  churchId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Type Media pour distinguer audio et vidéo
+enum MediaType {
+  AUDIO
+  VIDEO
+}

@@ -1,0 +1,31 @@
+// prisma.config.ts
+import { defineConfig } from "prisma/config";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+export default defineConfig({
+  datasource: {
+    provider: "mysql",
+    url: process.env.DATABASE_URL,
+  },
+  // Si tu veux générer un client Prisma, tu peux ajouter un generator :
+  generator: {
+    client: {
+      provider: "prisma-client-js",
+    },
+  },
+});
+/*
+// prisma.config.ts
+import dotenv from 'dotenv';
+
+dotenv.config();
+import { defineConfig } from 'prisma/config';
+
+export default defineConfig({
+  datasource: {
+    url: process.env.DATABASE_URL,
+  },
+});
+/*
