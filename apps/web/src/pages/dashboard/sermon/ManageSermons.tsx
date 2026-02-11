@@ -1,5 +1,5 @@
 // src/pages/dashboard/ManageSermons.tsx
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
