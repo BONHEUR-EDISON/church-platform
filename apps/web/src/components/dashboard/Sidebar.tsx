@@ -1,5 +1,6 @@
 // src/components/dashboard/Sidebar.tsx
-import { useState } from "react";
+
+import { useState } from "react";;
 import { Link, useLocation } from "react-router-dom";
 import { logout } from "../../hooks/useAuth";
 import {
@@ -12,17 +13,32 @@ import {
 
 interface SidebarProps {
   role: string;
+  isOpen: boolean; // <-- ajouté
+  toggleSidebar: () => void; // <-- ajouté
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ role }) => {
+const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
   const location = useLocation();
-  const [isOpen, setIsOpen] = useState(true);
-  const [sermonDropdownOpen, setSermonDropdownOpen] = useState(false);
+
+  // Pour gérer plusieurs dropdowns indépendants
+  const [openDropdowns, setOpenDropdowns] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const toggleDropdown = (name: string) => {
+    setOpenDropdowns((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
+  const dashboardPath =
+    role === "MEMBER" ? "/dashboard/member" : "/dashboard/admin";
 
   const allMenuItems = [
     {
       name: "Dashboard",
-      path: "/dashboard",
+      path: dashboardPath,
       icon: <HomeIcon className="h-6 w-6" />,
       roles: ["ADMIN", "PASTOR", "MEMBER"],
     },
@@ -30,13 +46,13 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       name: "Prédications",
       icon: <UserGroupIcon className="h-6 w-6" />,
       roles: ["ADMIN", "PASTOR", "MEMBER"],
-      // Les sous-menus seront gérés selon le rôle
-      children: role === "MEMBER"
-        ? [{ name: "Liste", path: "/dashboard/sermons" }]
-        : [
-            { name: "Liste", path: "/dashboard/sermons" },
-            { name: "Créer", path: "/dashboard/sermons/manage" },
-          ],
+      children:
+        role === "MEMBER"
+          ? [{ name: "Liste", path: "/dashboard/sermons" }]
+          : [
+              { name: "Liste", path: "/dashboard/sermons" },
+              { name: "Créer", path: "/dashboard/sermons/manage" },
+            ],
     },
     {
       name: "Ajouter un rôle",
@@ -71,7 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         </h2>
         <button
           className="md:hidden p-1 rounded hover:bg-gray-200 transition"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggleSidebar} // <-- utilise le prop ici
         >
           <svg
             className="w-6 h-6 text-gray-600"
@@ -94,14 +110,17 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
 
-          // Si le menu a des sous-items (dropdown)
+          // Dropdown
           if (item.children) {
+            const dropdownOpen = openDropdowns[item.name] || false;
             return (
               <div key={item.name} className="flex flex-col">
                 <button
-                  onClick={() => setSermonDropdownOpen(!sermonDropdownOpen)}
+                  onClick={() => toggleDropdown(item.name)}
                   className={`flex items-center justify-between gap-3 p-3 rounded-lg transition-all duration-300 text-gray-600 hover:bg-yellow-50 hover:text-yellow-500 hover:scale-105 ${
-                    item.children.some((child) => child.path === location.pathname)
+                    item.children.some(
+                      (child) => child.path === location.pathname,
+                    )
                       ? "bg-yellow-100 text-yellow-600 font-semibold shadow-lg"
                       : ""
                   }`}
@@ -110,11 +129,17 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
                     {item.icon}
                     {isOpen && <span className="text-sm">{item.name}</span>}
                   </div>
-                  {isOpen && <ChevronDownIcon className={`h-5 w-5 transition-transform ${sermonDropdownOpen ? "rotate-180" : ""}`} />}
+                  {isOpen && (
+                    <ChevronDownIcon
+                      className={`h-5 w-5 transition-transform ${
+                        dropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  )}
                 </button>
 
                 {/* Sous-menu */}
-                {sermonDropdownOpen && isOpen && (
+                {dropdownOpen && isOpen && (
                   <div className="flex flex-col pl-10 mt-1 gap-1">
                     {item.children.map((child) => (
                       <Link

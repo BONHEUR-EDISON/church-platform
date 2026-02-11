@@ -1,27 +1,27 @@
 // src/components/ProtectedRoute.tsx
-import React from "react";
+import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requiredRole?: string | string[];
+  children: ReactNode;
+  allowedRoles?: string | string[]; // <-- renommer pour matcher App.tsx
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  requiredRole,
+  allowedRoles,
 }) => {
-  const { token, role } = useAuth(requiredRole);
+  const { token, role } = useAuth(allowedRoles);
 
   if (!token) return <Navigate to="/login" replace />;
 
-  if (requiredRole) {
-    const allowedRoles = Array.isArray(requiredRole)
-      ? requiredRole.map(r => r.toUpperCase())
-      : [requiredRole.toUpperCase()];
+  if (allowedRoles) {
+    const rolesArray = Array.isArray(allowedRoles)
+      ? allowedRoles.map(r => r.toUpperCase())
+      : [allowedRoles.toUpperCase()];
 
-    if (!allowedRoles.includes(role || "")) {
+    if (!rolesArray.includes(role || "")) {
       // Redirection intelligente selon rôle
       switch (role) {
         case "ADMIN":

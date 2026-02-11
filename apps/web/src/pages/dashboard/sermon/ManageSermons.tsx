@@ -1,5 +1,6 @@
 // src/pages/dashboard/ManageSermons.tsx
-import { useEffect, useState, ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";;
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
@@ -21,7 +22,6 @@ export default function ManageSermons() {
   const [filter, setFilter] = useState<"ALL" | "VIDEO" | "AUDIO">("ALL");
   const [loading, setLoading] = useState(true);
 
-  // Formulaire
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [url, setUrl] = useState("");
@@ -50,7 +50,7 @@ export default function ManageSermons() {
     return url.startsWith("/uploads") ? `${BACKEND_URL}${url}` : url;
   };
 
-  // ⚡ Fetch sermons
+  // Fetch sermons
   useEffect(() => {
     if (!token || !user) return;
     const fetchSermons = async () => {
@@ -71,14 +71,12 @@ export default function ManageSermons() {
     fetchSermons();
   }, [token, user]);
 
-  // ⚡ Fetch sermon pour édition
+  // Fetch sermon pour édition
   useEffect(() => {
     if (!sermonId || !token) return;
     const fetchSermon = async () => {
       try {
-        const res = await axios.get(`/sermons/${sermonId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(`/sermons/${sermonId}`, { headers: { Authorization: `Bearer ${token}` } });
         setTitle(res.data.title);
         setUrl(res.data.url);
         setType(res.data.type);
@@ -152,26 +150,28 @@ export default function ManageSermons() {
 
         <main className="p-6 max-w-7xl mx-auto flex-1">
 
-          <h1 className="text-3xl font-bold mb-6">Gérer les Prédications</h1>
+          <h1 className="text-3xl font-extrabold mb-6 text-gray-800">Gérer les Prédications</h1>
 
           {/* Formulaire */}
-          <div className="bg-white shadow-md rounded-lg p-6 mb-6 flex flex-col gap-4">
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Titre" className="input" />
+          <div className="bg-white shadow-lg rounded-xl p-6 mb-6 flex flex-col gap-4">
+            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Titre" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
             <input type="file" accept="video/*,audio/*" onChange={handleFileChange} className="input" />
-            <input value={url} onChange={handleUrlChange} placeholder="Ou collez un lien YouTube/Vimeo" className="input" />
-            <select value={type} onChange={e => setType(e.target.value as "AUDIO" | "VIDEO")} className="input">
+            <input value={url} onChange={handleUrlChange} placeholder="Ou collez un lien YouTube/Vimeo" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
+            <select value={type} onChange={e => setType(e.target.value as "AUDIO" | "VIDEO")} className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400">
               <option value="VIDEO">VIDEO</option>
               <option value="AUDIO">AUDIO</option>
             </select>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" className="input" />
+            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
+            
             {preview && type === "VIDEO" ? (
-              <iframe className="w-full aspect-video rounded-md" src={getEmbedUrl(preview)} title="Aperçu vidéo" allowFullScreen />
+              <iframe className="w-full aspect-video rounded-lg shadow-md" src={getEmbedUrl(preview)} title="Aperçu vidéo" allowFullScreen />
             ) : preview && type === "AUDIO" ? (
-              <audio controls className="w-full rounded-md">
+              <audio controls className="w-full rounded-lg">
                 <source src={preview} type="audio/mpeg" />
               </audio>
             ) : null}
-            <button onClick={submit} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+
+            <button onClick={submit} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
               {sermonId ? "Modifier" : "Ajouter"}
             </button>
           </div>
@@ -179,7 +179,7 @@ export default function ManageSermons() {
           {/* Filtre */}
           <div className="flex gap-4 mb-6">
             {(["ALL", "VIDEO", "AUDIO"] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-full ${filter===f?"bg-blue-600 text-white":"bg-gray-200 text-gray-700 hover:bg-gray-300"}`}>
+              <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-full font-semibold ${filter===f?"bg-blue-600 text-white":"bg-gray-200 text-gray-700 hover:bg-gray-300 transition"}`}>
                 {f==="ALL"?"Tout":f}
               </button>
             ))}
@@ -187,13 +187,13 @@ export default function ManageSermons() {
 
           {/* Player principal */}
           {currentSermon && (
-            <div className="mb-6 bg-gray-900 text-white rounded-lg shadow-lg p-4">
+            <div className="mb-6 bg-gray-900 text-white rounded-xl shadow-lg p-4 transition-all duration-500 hover:shadow-2xl">
               <h2 className="text-2xl font-semibold mb-2">{currentSermon.title}</h2>
               {currentSermon.description && <p className="text-gray-300 mb-4">{currentSermon.description}</p>}
               {currentSermon.type === "VIDEO" ? (
-                <iframe className="w-full aspect-video rounded-md" src={getEmbedUrl(currentSermon.url)} title={currentSermon.title} allowFullScreen />
+                <iframe className="w-full aspect-video rounded-lg shadow-md" src={getEmbedUrl(currentSermon.url)} title={currentSermon.title} allowFullScreen />
               ) : (
-                <audio controls className="w-full rounded-md">
+                <audio controls className="w-full rounded-lg">
                   <source src={currentSermon.url} type="audio/mpeg" />
                 </audio>
               )}
@@ -203,25 +203,27 @@ export default function ManageSermons() {
           {/* Grille */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSermons.map(s => (
-              <div key={s.id} className="bg-white rounded-lg shadow-md overflow-hidden group relative hover:shadow-xl transition cursor-pointer"
+              <div key={s.id} className="bg-white rounded-xl shadow-md overflow-hidden group relative hover:shadow-xl transform hover:scale-105 transition-all cursor-pointer"
                    onClick={() => setCurrentSermon(s)}>
                 {s.type === "VIDEO" ? (
-                  <iframe className="w-full aspect-video" src={getEmbedUrl(s.url)} title={s.title} allowFullScreen />
+                  <iframe className="w-full aspect-video rounded-t-xl" src={getEmbedUrl(s.url)} title={s.title} allowFullScreen />
                 ) : (
-                  <audio controls className="w-full p-2" onPlay={e => e.currentTarget.pause()}><source src={s.url} type="audio/mpeg" /></audio>
+                  <audio controls className="w-full p-2" onPlay={e => e.currentTarget.pause()}>
+                    <source src={s.url} type="audio/mpeg" />
+                  </audio>
                 )}
                 <div className="p-4">
-                  <h3 className="font-semibold">{s.title}</h3>
-                  {s.description && <p className="text-gray-500 text-sm">{s.description}</p>}
+                  <h3 className="font-semibold text-lg">{s.title}</h3>
+                  {s.description && <p className="text-gray-500 text-sm truncate">{s.description}</p>}
                 </div>
 
-                {/* Admin buttons */}
-                {user?.roles.includes("ADMIN") && (
-                  <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                    <button className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white" onClick={e => {e.stopPropagation(); navigate(`/dashboard/manage-sermons?id=${s.id}`)}}>
+                {/* Admin/Pastor buttons */}
+                {(user?.roles.includes("ADMIN") || user?.roles.includes("PASTOR")) && (
+                  <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                    <button className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white" onClick={e => { e.stopPropagation(); navigate(`/dashboard/manage-sermons?id=${s.id}`) }}>
                       <PencilIcon className="w-5 h-5"/>
                     </button>
-                    <button className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white" onClick={e => {e.stopPropagation(); handleDelete(s.id)}}>
+                    <button className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white" onClick={e => { e.stopPropagation(); handleDelete(s.id) }}>
                       <TrashIcon className="w-5 h-5"/>
                     </button>
                   </div>

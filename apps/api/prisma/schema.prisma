@@ -18,23 +18,30 @@ model Church {
   city           String
   address        String
 
-  users          User[]
-  members        Member[]
-  sermons        Sermon[]   // <-- Ajout des prédications
+  // Un seul admin
+  admin          User?     @relation("AdminChurch", fields: [adminId], references: [id])
+  adminId        String?   @unique
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  users          User[]    @relation("ChurchUsers") // tous les utilisateurs (PASTOR ou MEMBER)
+  members        Member[]
+  sermons        Sermon[]
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model User {
   id        String     @id @default(cuid())
   email     String     @unique
   password  String
-  church    Church     @relation(fields: [churchId], references: [id])
-  churchId  String
-  roles     UserRole[] // relation vers la table pivot UserRole
+  church    Church?    @relation("ChurchUsers", fields: [churchId], references: [id])
+  churchId  String?
+  roles     UserRole[] 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
+  // Relation pour l’admin unique
+  adminOfChurch Church? @relation("AdminChurch")
 }
 
 model Member {
@@ -68,21 +75,22 @@ model UserRole {
   @@unique([userId, roleId])
 }
 
-// 🔹 Modèle pour les prédications
+// Modèle des prédications
 model Sermon {
   id          String    @id @default(cuid())
   title       String
   description String?
   type        MediaType
-  url         String    // Lien vers le fichier audio/vidéo
+  url         String    
   church      Church    @relation(fields: [churchId], references: [id])
   churchId    String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
-// Type Media pour distinguer audio et vidéo
+// Type Media
 enum MediaType {
   AUDIO
   VIDEO
 }
+
