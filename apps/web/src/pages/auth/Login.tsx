@@ -1,6 +1,6 @@
 // src/pages/auth/Login.tsx
 
-import { useState } from "react";;
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authenticate, setAuthData, getRole } from "../../hooks/useAuth";
 import axios from "../../api/axios";
@@ -100,4 +100,4 @@ export default function Login() {
     </div>
   );
 }
-
+

@@ -1,6 +1,6 @@
 // src/pages/dashboard/SermonsDashboard.tsx
 
-import { useEffect, useState, useRef } from "react";;
+import { useEffect, useState, useRef } from "react";
 import axios from "../../api/axios";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../../components/dashboard/Sidebar";
@@ -300,4 +300,4 @@ export default function SermonsDashboard() {
       </div>
     </div>
   );
-}
+}

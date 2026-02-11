@@ -6,22 +6,22 @@ import { useAuth } from "../hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: string | string[];
+  requiredRole?: string | string[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  allowedRoles,
+  requiredRole,
 }) => {
-  const { token, role } = useAuth(allowedRoles);
+  const { token, role } = useAuth(requiredRole);
 
   if (!token) return <Navigate to="/login" replace />;
 
-  if (allowedRoles) {
-    const rolesArray = Array.isArray(allowedRoles)
-      ? allowedRoles.map(r => r.toUpperCase())
-      : allowedRoles
-      ? [allowedRoles.toUpperCase()]
+  if (requiredRole) {
+    const rolesArray = Array.isArray(requiredRole)
+      ? requiredRole.map(r => r.toUpperCase())
+      : requiredRole
+      ? [requiredRole.toUpperCase()]
       : [];
 
     if (!rolesArray.includes(role || "")) {
@@ -41,4 +41,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default ProtectedRoute;

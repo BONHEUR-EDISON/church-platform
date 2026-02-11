@@ -1,6 +1,6 @@
 // src/pages/dashboard/MemberDashboard.tsx
 
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Sidebar from "../../components/dashboard/Sidebar";
@@ -107,4 +107,4 @@ const MemberDashboard = () => {
   );
 };
 
-export default MemberDashboard;
+export default MemberDashboard;

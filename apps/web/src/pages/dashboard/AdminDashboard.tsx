@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Sidebar from "../../components/dashboard/Sidebar";
@@ -106,7 +106,7 @@ export default AdminDashboard;
 
 /*// src/pages/dashboard/AdminDashboard.tsx
 
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
@@ -195,4 +195,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;*/
+export default AdminDashboard;*/

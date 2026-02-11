@@ -1,6 +1,6 @@
 // src/components/dashboard/Sidebar.tsx
 
-import { useState } from "react";;
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { logout } from "../../hooks/useAuth";
 import {
@@ -190,4 +190,4 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, toggleSidebar }) => {
   );
 };
 
-export default Sidebar;
+export default Sidebar;

@@ -20,4 +20,4 @@ const PastorDashboard = () => {
   );
 };
 
-export default PastorDashboard;
+export default PastorDashboard;

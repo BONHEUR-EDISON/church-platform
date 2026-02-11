@@ -1,6 +1,6 @@
 // src/pages/dashboard/AdminDashboard.tsx
 
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import axios from "../../../api/axios";
 
 interface UserRoleStat {
@@ -102,4 +102,4 @@ function StatCard({ title, value }: { title: string; value: any }) {
       <p className="text-2xl font-bold text-navy mt-2">{value}</p>
     </div>
   );
-}
+}

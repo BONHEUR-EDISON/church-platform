@@ -12,14 +12,12 @@ import SermonsDashboard from "./pages/dashboard/SermonsDashboard";
 import ManageSermons from "./pages/dashboard/sermon/ManageSermons";
 import AddRole from "./pages/role/AddRole";
 import ProtectedRoute from "./components/ProtectedRoute";
-
 function App() {
   return (
     <Router>
       <Routes>
         {/* Redirection racine */}
         <Route path="/" element={<Navigate to="/home" />} />
-
         {/* Pages publiques */}
         <Route path="/home" element={<Home />} />
         <Route path="/registerall" element={<RegisterAll />} />
@@ -27,7 +25,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
-
         {/* Dashboards protégés */}
         <Route
           path="/dashboard/admin"
@@ -56,7 +53,7 @@ function App() {
     <Route
   path="/dashboard/sermons"
   element={
-    <ProtectedRoute allowedRoles={["ADMIN", "PASTOR", "MEMBER"]}>
+    <ProtectedRoute requiredRole={["ADMIN", "PASTOR", "MEMBER"]}>
       <SermonsDashboard />
     </ProtectedRoute>
   }
@@ -64,14 +61,11 @@ function App() {
 <Route
   path="/dashboard/sermons/manage"
   element={
-    <ProtectedRoute allowedRoles={["ADMIN", "PASTOR"]}>
+    <ProtectedRoute requiredRole={["ADMIN", "PASTOR"]}>
       <ManageSermons />
     </ProtectedRoute>
   }
 />
-
-
-
         {/* Pages administratives protégées */}
         <Route
           path="/add-role"
@@ -81,12 +75,10 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         {/* Catch-all */}
         <Route path="*" element={<div>Page non trouvée</div>} />
       </Routes>
     </Router>
   );
 }
-
 export default App;

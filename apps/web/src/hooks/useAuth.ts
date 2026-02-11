@@ -1,6 +1,6 @@
 // src/hooks/useAuth.ts
 
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 
@@ -63,10 +63,10 @@ export const useAuth = (requiredRole?: string | string[]) => {
       return;
     }
     if (requiredRole) {
-      const allowedRoles = Array.isArray(requiredRole)
+      const requiredRole = Array.isArray(requiredRole)
         ? requiredRole
         : [requiredRole];
-      if (!allowedRoles.includes(role || "")) {
+      if (!requiredRole.includes(role || "")) {
         // Redirige vers son dashboard selon rôle principal
         const mainRole = getRole() || "MEMBER";
         switch (mainRole.toUpperCase()) {
@@ -86,10 +86,10 @@ export const useAuth = (requiredRole?: string | string[]) => {
   const protectRoute = (): boolean => {
     if (!token) return false;
     if (requiredRole) {
-      const allowedRoles = Array.isArray(requiredRole)
+      const requiredRole = Array.isArray(requiredRole)
         ? requiredRole
         : [requiredRole];
-      if (!allowedRoles.includes(role || "")) return false;
+      if (!requiredRole.includes(role || "")) return false;
     }
     return true;
   };
@@ -107,4 +107,4 @@ export const authenticate = async (
   if (!access_token || !user) throw new Error("Token ou user manquant");
   setAuthData(access_token, user);
   return user;
-};
+};

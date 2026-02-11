@@ -14,4 +14,4 @@ export default function PublicLayout({ children }: Props) {
       <Footer />
     </div>
   );
-}
+}

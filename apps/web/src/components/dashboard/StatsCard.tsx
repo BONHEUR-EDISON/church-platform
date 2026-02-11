@@ -19,4 +19,4 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon }) => {
   );
 };
 
-export default StatsCard;
+export default StatsCard;

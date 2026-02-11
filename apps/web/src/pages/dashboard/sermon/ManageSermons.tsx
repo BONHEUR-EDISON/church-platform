@@ -1,6 +1,6 @@
 // src/pages/dashboard/ManageSermons.tsx
 import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";;
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
