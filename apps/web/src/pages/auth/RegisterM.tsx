@@ -1,6 +1,8 @@
 
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import type { useState } from "react";
+import { useEffect } from "react";
+import type { Link } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../api/axios";
 
 export default function RegisterAll() {

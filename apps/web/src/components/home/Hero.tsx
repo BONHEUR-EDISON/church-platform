@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import type { Link } from "react-router-dom";
 
 export default function Hero() {
   return (

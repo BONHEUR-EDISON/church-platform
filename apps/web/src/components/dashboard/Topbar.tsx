@@ -1,7 +1,7 @@
 // src/components/dashboard/Topbar.tsx
 import React from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import type { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 const Topbar: React.FC = () => {
   const { user } = useAuth();

@@ -1,7 +1,8 @@
 // src/components/dashboard/Sidebar.tsx
 
-import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import type { useState } from "react";
+import type { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { logout } from "../../hooks/useAuth";
 import {
   HomeIcon,

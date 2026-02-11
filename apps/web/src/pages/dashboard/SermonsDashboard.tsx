@@ -1,11 +1,12 @@
 // src/pages/dashboard/SermonsDashboard.tsx
 
-import { useEffect, useState, useRef } from "react";
+import type { useState } from "react";
+import { useEffect, useRef } from "react";
 import axios from "../../api/axios";
 import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
-import { PencilIcon, TrashIcon, Bars3Icon, ArrowLeftIcon } from "@heroicons/react/24/solid";
+import type { PencilIcon, TrashIcon, Bars3Icon, ArrowLeftIcon } from "@heroicons/react/24/solid";
 
 interface Sermon {
   id: string;

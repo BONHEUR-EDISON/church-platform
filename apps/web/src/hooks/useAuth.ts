@@ -1,6 +1,7 @@
 // src/hooks/useAuth.ts
 
-import { useEffect, useState } from "react";
+import type { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 

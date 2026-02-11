@@ -1,6 +1,7 @@
 // src/pages/dashboard/AdminDashboard.tsx
 
-import { useEffect, useState } from "react";
+import type { useState } from "react";
+import { useEffect } from "react";
 import axios from "../../../api/axios";
 
 interface UserRoleStat {

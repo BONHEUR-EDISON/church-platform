@@ -1,13 +1,14 @@
 // src/pages/dashboard/MemberDashboard.tsx
 
-import { useEffect, useState } from "react";
+import type { useState } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 import StatsCard from "../../components/dashboard/StatsCard";
 import axios from "../../api/axios";
-import { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
+import type { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
 import {
   BarChart,
   Bar,

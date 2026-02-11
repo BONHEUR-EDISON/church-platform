@@ -1,12 +1,13 @@
 // src/pages/dashboard/ManageSermons.tsx
 import type { ChangeEvent } from "react";
-import { useEffect, useState } from "react";
+import type { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import Sidebar from "../../../components/dashboard/Sidebar";
 import Topbar from "../../../components/dashboard/Topbar";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import type { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 interface Sermon {
   id: string;

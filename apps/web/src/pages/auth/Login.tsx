@@ -1,7 +1,8 @@
 // src/pages/auth/Login.tsx
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import type { useState } from "react";
+import type { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { authenticate, setAuthData, getRole } from "../../hooks/useAuth";
 import axios from "../../api/axios";
 

@@ -1,6 +1,7 @@
 // src/components/dashboard/DashboardLayout.tsx
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import type { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { logout, useAuth } from "../../hooks/useAuth";
 import {
   HomeIcon,
@@ -8,7 +9,7 @@ import {
   ArrowRightOnRectangleIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import type { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
