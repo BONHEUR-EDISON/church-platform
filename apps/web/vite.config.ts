@@ -1,12 +1,17 @@
-// vite.config.ts
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default defineConfig({
+  root: path.resolve(__dirname), // ou "./" si tu es déjà dans apps/web
   plugins: [react()],
   build: {
-    outDir: "dist", // <-- c’est ici que Vite va générer le dossier
+    outDir: "dist", // Vite va générer apps/web/dist
     emptyOutDir: true
   },
-  root: "./" // assure-toi que c’est bien apps/web si config spécifique
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src")
+    }
+  }
 });
