@@ -1,11 +1,12 @@
 // src/components/ProtectedRoute.tsx
-import React, { ReactNode } from "react";
+import React from "react";
+import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  allowedRoles?: string | string[]; // <-- renommer pour matcher App.tsx
+  allowedRoles?: string | string[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
@@ -19,10 +20,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   if (allowedRoles) {
     const rolesArray = Array.isArray(allowedRoles)
       ? allowedRoles.map(r => r.toUpperCase())
-      : [allowedRoles.toUpperCase()];
+      : allowedRoles
+      ? [allowedRoles.toUpperCase()]
+      : [];
 
     if (!rolesArray.includes(role || "")) {
-      // Redirection intelligente selon rôle
       switch (role) {
         case "ADMIN":
           return <Navigate to="/dashboard/admin" replace />;
