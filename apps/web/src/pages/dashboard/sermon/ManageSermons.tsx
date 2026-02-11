@@ -6,7 +6,7 @@ import axios from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import Sidebar from "../../../components/dashboard/Sidebar";
 import Topbar from "../../../components/dashboard/Topbar";
-import { PencilIcon, TrashIcon, Bars3Icon } from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 interface Sermon {
   id: string;
@@ -45,7 +45,7 @@ export default function ManageSermons() {
   const getEmbedUrl = (url: string) => {
     if (isYouTube(url)) {
       const match = url.match(
-        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/
       );
       return match ? `https://www.youtube.com/embed/${match[1]}` : url;
     }
@@ -111,11 +111,7 @@ export default function ManageSermons() {
     setUrl(val);
     setFile(null);
     setPreview(val);
-    if (
-      val.includes("youtube.com") ||
-      val.includes("youtu.be") ||
-      val.includes("vimeo.com")
-    )
+    if (val.includes("youtube.com") || val.includes("youtu.be") || val.includes("vimeo.com"))
       setType("VIDEO");
     else if (val.endsWith(".mp3") || val.endsWith(".wav")) setType("AUDIO");
     else setType("VIDEO");
@@ -136,7 +132,9 @@ export default function ManageSermons() {
       };
       if (sermonId)
         await axios.patch(`/sermons/${sermonId}`, formData, { headers });
-      else await axios.post("/sermons", formData, { headers });
+      else
+        await axios.post("/sermons", formData, { headers });
+
       navigate("/dashboard/sermons");
     } catch (err) {
       console.error(err);
@@ -165,7 +163,7 @@ export default function ManageSermons() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar avec toutes les props nécessaires */}
+      {/* Sidebar avec props complètes */}
       <Sidebar
         role={user?.roles[0] || ""}
         isOpen={sidebarOpen}
@@ -173,15 +171,15 @@ export default function ManageSermons() {
       />
 
       <div className="flex-1 flex flex-col overflow-auto">
-        {/* Topbar peut recevoir toggleSidebar si tu veux bouton mobile */}
-        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        {/* Topbar avec toggleSidebar */}
+        <Topbar user={user} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
         <main className="p-6 max-w-7xl mx-auto flex-1">
           <h1 className="text-3xl font-extrabold mb-6 text-gray-800">
             Gérer les Prédications
           </h1>
 
-          {/* Formulaire */}
+          {/* Formulaire prédication */}
           <div className="bg-white shadow-lg rounded-xl p-6 mb-6 flex flex-col gap-4">
             <input
               value={title}
@@ -243,7 +241,11 @@ export default function ManageSermons() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-full font-semibold ${filter === f ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition"}`}
+                className={`px-4 py-2 rounded-full font-semibold ${
+                  filter === f
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+                }`}
               >
                 {f === "ALL" ? "Tout" : f}
               </button>
@@ -276,7 +278,7 @@ export default function ManageSermons() {
             </div>
           )}
 
-          {/* Grille */}
+          {/* Grille prédications */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredSermons.map((s) => (
               <div
@@ -310,8 +312,7 @@ export default function ManageSermons() {
                 </div>
 
                 {/* Admin/Pastor buttons */}
-                {(user?.roles.includes("ADMIN") ||
-                  user?.roles.includes("PASTOR")) && (
+                {(user?.roles.includes("ADMIN") || user?.roles.includes("PASTOR")) && (
                   <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
                     <button
                       className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"

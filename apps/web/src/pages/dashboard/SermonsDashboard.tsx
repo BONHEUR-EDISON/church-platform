@@ -8,7 +8,6 @@ import Topbar from "../../components/dashboard/Topbar";
 import {
   PencilIcon,
   TrashIcon,
-  Bars3Icon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/solid";
 
@@ -149,18 +148,17 @@ export default function SermonsDashboard() {
       <div
         className={`fixed inset-0 z-40 md:relative md:translate-x-0 transition-transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} md:flex w-64`}
       >
-        <Sidebar role={user?.roles[0] || ""} />
+        <Sidebar
+  role={user?.roles[0] || ""}
+  isOpen={sidebarOpen}
+  toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+/>
+
       </div>
 
       <div className="flex-1 flex flex-col overflow-auto">
-        <Topbar user={user}>
-          <button
-            className="md:hidden p-2 rounded hover:bg-gray-200 transition"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <Bars3Icon className="w-6 h-6 text-gray-600" />
-          </button>
-        </Topbar>
+        <Topbar user={user} toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+
 
         <div className="p-4 md:p-6 max-w-7xl mx-auto">
           {layout === "grid" && (
