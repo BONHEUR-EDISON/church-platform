@@ -1,6 +1,6 @@
 // src/components/dashboard/DashboardLayout.tsx
 import React, { useState, useEffect } from "react";
-import type { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { logout, useAuth } from "../../hooks/useAuth";
 import {
@@ -153,4 +153,4 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   );
 };
 
-export default DashboardLayout;
+export default DashboardLayout;
