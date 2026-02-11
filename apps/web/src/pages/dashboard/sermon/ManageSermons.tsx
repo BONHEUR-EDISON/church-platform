@@ -1,13 +1,12 @@
 // src/pages/dashboard/ManageSermons.tsx
 import type { ChangeEvent } from "react";
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../../api/axios";
 import { useAuth } from "../../../hooks/useAuth";
 import Sidebar from "../../../components/dashboard/Sidebar";
 import Topbar from "../../../components/dashboard/Topbar";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon, Bars3Icon } from "@heroicons/react/24/solid";
 
 interface Sermon {
   id: string;
@@ -35,13 +34,19 @@ export default function ManageSermons() {
 
   const [currentSermon, setCurrentSermon] = useState<Sermon | null>(null);
 
+  // Sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const BACKEND_URL = "http://localhost:3000";
 
-  const isYouTube = (url: string) => url.includes("youtube.com") || url.includes("youtu.be");
+  const isYouTube = (url: string) =>
+    url.includes("youtube.com") || url.includes("youtu.be");
   const isVimeo = (url: string) => url.includes("vimeo.com");
   const getEmbedUrl = (url: string) => {
     if (isYouTube(url)) {
-      const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const match = url.match(
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+      );
       return match ? `https://www.youtube.com/embed/${match[1]}` : url;
     }
     if (isVimeo(url)) {
@@ -77,7 +82,9 @@ export default function ManageSermons() {
     if (!sermonId || !token) return;
     const fetchSermon = async () => {
       try {
-        const res = await axios.get(`/sermons/${sermonId}`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.get(`/sermons/${sermonId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setTitle(res.data.title);
         setUrl(res.data.url);
         setType(res.data.type);
@@ -104,7 +111,12 @@ export default function ManageSermons() {
     setUrl(val);
     setFile(null);
     setPreview(val);
-    if (val.includes("youtube.com") || val.includes("youtu.be") || val.includes("vimeo.com")) setType("VIDEO");
+    if (
+      val.includes("youtube.com") ||
+      val.includes("youtu.be") ||
+      val.includes("vimeo.com")
+    )
+      setType("VIDEO");
     else if (val.endsWith(".mp3") || val.endsWith(".wav")) setType("AUDIO");
     else setType("VIDEO");
   };
@@ -118,8 +130,12 @@ export default function ManageSermons() {
       if (file) formData.append("file", file);
       else if (url) formData.append("url", url);
 
-      const headers = { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` };
-      if (sermonId) await axios.patch(`/sermons/${sermonId}`, formData, { headers });
+      const headers = {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      };
+      if (sermonId)
+        await axios.patch(`/sermons/${sermonId}`, formData, { headers });
       else await axios.post("/sermons", formData, { headers });
       navigate("/dashboard/sermons");
     } catch (err) {
@@ -130,8 +146,10 @@ export default function ManageSermons() {
   const handleDelete = async (id: string) => {
     if (!confirm("Voulez-vous vraiment supprimer cette prédication ?")) return;
     try {
-      await axios.delete(`/sermons/${id}`, { headers: { Authorization: `Bearer ${token}` } });
-      setSermons(prev => prev.filter(s => s.id !== id));
+      await axios.delete(`/sermons/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSermons((prev) => prev.filter((s) => s.id !== id));
       if (currentSermon?.id === id) setCurrentSermon(null);
     } catch (err) {
       console.error(err);
@@ -139,49 +157,95 @@ export default function ManageSermons() {
     }
   };
 
-  const filteredSermons = filter === "ALL" ? sermons : sermons.filter(s => s.type === filter);
+  const filteredSermons =
+    filter === "ALL" ? sermons : sermons.filter((s) => s.type === filter);
 
-  if (loading) return <p className="text-center mt-10 text-gray-600">Chargement...</p>;
+  if (loading)
+    return <p className="text-center mt-10 text-gray-600">Chargement...</p>;
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar role={user?.roles[0] || ""} />
+      {/* Sidebar avec toutes les props nécessaires */}
+      <Sidebar
+        role={user?.roles[0] || ""}
+        isOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
+
       <div className="flex-1 flex flex-col overflow-auto">
-        <Topbar />
+        {/* Topbar peut recevoir toggleSidebar si tu veux bouton mobile */}
+        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
         <main className="p-6 max-w-7xl mx-auto flex-1">
-
-          <h1 className="text-3xl font-extrabold mb-6 text-gray-800">Gérer les Prédications</h1>
+          <h1 className="text-3xl font-extrabold mb-6 text-gray-800">
+            Gérer les Prédications
+          </h1>
 
           {/* Formulaire */}
           <div className="bg-white shadow-lg rounded-xl p-6 mb-6 flex flex-col gap-4">
-            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Titre" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
-            <input type="file" accept="video/*,audio/*" onChange={handleFileChange} className="input" />
-            <input value={url} onChange={handleUrlChange} placeholder="Ou collez un lien YouTube/Vimeo" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
-            <select value={type} onChange={e => setType(e.target.value as "AUDIO" | "VIDEO")} className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Titre"
+              className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
+            />
+            <input
+              type="file"
+              accept="video/*,audio/*"
+              onChange={handleFileChange}
+              className="input"
+            />
+            <input
+              value={url}
+              onChange={handleUrlChange}
+              placeholder="Ou collez un lien YouTube/Vimeo"
+              className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
+            />
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value as "AUDIO" | "VIDEO")}
+              className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
+            >
               <option value="VIDEO">VIDEO</option>
               <option value="AUDIO">AUDIO</option>
             </select>
-            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description" className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400" />
-            
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              className="input border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-400"
+            />
+
             {preview && type === "VIDEO" ? (
-              <iframe className="w-full aspect-video rounded-lg shadow-md" src={getEmbedUrl(preview)} title="Aperçu vidéo" allowFullScreen />
+              <iframe
+                className="w-full aspect-video rounded-lg shadow-md"
+                src={getEmbedUrl(preview)}
+                title="Aperçu vidéo"
+                allowFullScreen
+              />
             ) : preview && type === "AUDIO" ? (
               <audio controls className="w-full rounded-lg">
                 <source src={preview} type="audio/mpeg" />
               </audio>
             ) : null}
 
-            <button onClick={submit} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md">
+            <button
+              onClick={submit}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-md"
+            >
               {sermonId ? "Modifier" : "Ajouter"}
             </button>
           </div>
 
           {/* Filtre */}
           <div className="flex gap-4 mb-6">
-            {(["ALL", "VIDEO", "AUDIO"] as const).map(f => (
-              <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-full font-semibold ${filter===f?"bg-blue-600 text-white":"bg-gray-200 text-gray-700 hover:bg-gray-300 transition"}`}>
-                {f==="ALL"?"Tout":f}
+            {(["ALL", "VIDEO", "AUDIO"] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-4 py-2 rounded-full font-semibold ${filter === f ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300 transition"}`}
+              >
+                {f === "ALL" ? "Tout" : f}
               </button>
             ))}
           </div>
@@ -189,10 +253,21 @@ export default function ManageSermons() {
           {/* Player principal */}
           {currentSermon && (
             <div className="mb-6 bg-gray-900 text-white rounded-xl shadow-lg p-4 transition-all duration-500 hover:shadow-2xl">
-              <h2 className="text-2xl font-semibold mb-2">{currentSermon.title}</h2>
-              {currentSermon.description && <p className="text-gray-300 mb-4">{currentSermon.description}</p>}
+              <h2 className="text-2xl font-semibold mb-2">
+                {currentSermon.title}
+              </h2>
+              {currentSermon.description && (
+                <p className="text-gray-300 mb-4">
+                  {currentSermon.description}
+                </p>
+              )}
               {currentSermon.type === "VIDEO" ? (
-                <iframe className="w-full aspect-video rounded-lg shadow-md" src={getEmbedUrl(currentSermon.url)} title={currentSermon.title} allowFullScreen />
+                <iframe
+                  className="w-full aspect-video rounded-lg shadow-md"
+                  src={getEmbedUrl(currentSermon.url)}
+                  title={currentSermon.title}
+                  allowFullScreen
+                />
               ) : (
                 <audio controls className="w-full rounded-lg">
                   <source src={currentSermon.url} type="audio/mpeg" />
@@ -203,36 +278,64 @@ export default function ManageSermons() {
 
           {/* Grille */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSermons.map(s => (
-              <div key={s.id} className="bg-white rounded-xl shadow-md overflow-hidden group relative hover:shadow-xl transform hover:scale-105 transition-all cursor-pointer"
-                   onClick={() => setCurrentSermon(s)}>
+            {filteredSermons.map((s) => (
+              <div
+                key={s.id}
+                className="bg-white rounded-xl shadow-md overflow-hidden group relative hover:shadow-xl transform hover:scale-105 transition-all cursor-pointer"
+                onClick={() => setCurrentSermon(s)}
+              >
                 {s.type === "VIDEO" ? (
-                  <iframe className="w-full aspect-video rounded-t-xl" src={getEmbedUrl(s.url)} title={s.title} allowFullScreen />
+                  <iframe
+                    className="w-full aspect-video rounded-t-xl"
+                    src={getEmbedUrl(s.url)}
+                    title={s.title}
+                    allowFullScreen
+                  />
                 ) : (
-                  <audio controls className="w-full p-2" onPlay={e => e.currentTarget.pause()}>
+                  <audio
+                    controls
+                    className="w-full p-2"
+                    onPlay={(e) => e.currentTarget.pause()}
+                  >
                     <source src={s.url} type="audio/mpeg" />
                   </audio>
                 )}
                 <div className="p-4">
                   <h3 className="font-semibold text-lg">{s.title}</h3>
-                  {s.description && <p className="text-gray-500 text-sm truncate">{s.description}</p>}
+                  {s.description && (
+                    <p className="text-gray-500 text-sm truncate">
+                      {s.description}
+                    </p>
+                  )}
                 </div>
 
                 {/* Admin/Pastor buttons */}
-                {(user?.roles.includes("ADMIN") || user?.roles.includes("PASTOR")) && (
+                {(user?.roles.includes("ADMIN") ||
+                  user?.roles.includes("PASTOR")) && (
                   <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                    <button className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white" onClick={e => { e.stopPropagation(); navigate(`/dashboard/manage-sermons?id=${s.id}`) }}>
-                      <PencilIcon className="w-5 h-5"/>
+                    <button
+                      className="bg-blue-500 p-2 rounded-full hover:bg-blue-600 text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/dashboard/manage-sermons?id=${s.id}`);
+                      }}
+                    >
+                      <PencilIcon className="w-5 h-5" />
                     </button>
-                    <button className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white" onClick={e => { e.stopPropagation(); handleDelete(s.id) }}>
-                      <TrashIcon className="w-5 h-5"/>
+                    <button
+                      className="bg-red-500 p-2 rounded-full hover:bg-red-600 text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(s.id);
+                      }}
+                    >
+                      <TrashIcon className="w-5 h-5" />
                     </button>
                   </div>
                 )}
               </div>
             ))}
           </div>
-
         </main>
       </div>
     </div>

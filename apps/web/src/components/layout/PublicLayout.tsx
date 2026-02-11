@@ -1,4 +1,5 @@
-import { ReactNode } from "react";;
+// src/components/layout/PublicLayout.tsx
+import type { ReactNode } from "react";;
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -14,4 +15,4 @@ export default function PublicLayout({ children }: Props) {
       <Footer />
     </div>
   );
-}
+}

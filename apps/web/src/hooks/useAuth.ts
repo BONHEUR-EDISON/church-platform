@@ -1,7 +1,6 @@
 // src/hooks/useAuth.ts
 
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 
@@ -46,29 +45,33 @@ export const logout = () => {
 };
 
 // Hook React pour auth
-export const useAuth = (requiredRole?: string | string[]) => {
+export const useAuth = (requiredRoleParam?: string | string[]) => {
   const navigate = useNavigate();
   const [token, setToken] = useState<string | null>(getToken());
   const [role, setRole] = useState<string | null>(getRole());
   const [user, setUser] = useState<User | null>(getUser());
 
+  // Sync localStorage state
   useEffect(() => {
     setToken(getToken());
     setRole(getRole());
     setUser(getUser());
   }, []);
 
+  // Redirection selon rôle
   useEffect(() => {
     if (!token) {
       navigate("/login", { replace: true });
       return;
     }
-    if (requiredRole) {
-      const requiredRole = Array.isArray(requiredRole)
-        ? requiredRole
-        : [requiredRole];
-      if (!requiredRole.includes(role || "")) {
-        // Redirige vers son dashboard selon rôle principal
+
+    if (requiredRoleParam) {
+      // On crée une nouvelle variable locale pour éviter la collision TS
+      const roles: string[] = Array.isArray(requiredRoleParam)
+        ? requiredRoleParam
+        : [requiredRoleParam];
+
+      if (!roles.includes(role || "")) {
         const mainRole = getRole() || "MEMBER";
         switch (mainRole.toUpperCase()) {
           case "ADMIN":
@@ -82,16 +85,20 @@ export const useAuth = (requiredRole?: string | string[]) => {
         }
       }
     }
-  }, [token, role, requiredRole, navigate]);
+  }, [token, role, requiredRoleParam, navigate]);
 
+  // Fonction pour protéger la route
   const protectRoute = (): boolean => {
     if (!token) return false;
-    if (requiredRole) {
-      const requiredRole = Array.isArray(requiredRole)
-        ? requiredRole
-        : [requiredRole];
-      if (!requiredRole.includes(role || "")) return false;
+
+    if (requiredRoleParam) {
+      const roles: string[] = Array.isArray(requiredRoleParam)
+        ? requiredRoleParam
+        : [requiredRoleParam];
+
+      if (!roles.includes(role || "")) return false;
     }
+
     return true;
   };
 
@@ -108,4 +115,4 @@ export const authenticate = async (
   if (!access_token || !user) throw new Error("Token ou user manquant");
   setAuthData(access_token, user);
   return user;
-};
+};

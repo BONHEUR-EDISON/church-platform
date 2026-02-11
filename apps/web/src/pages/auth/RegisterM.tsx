@@ -1,4 +1,4 @@
-
+// src/pages/auth/RegisterM.tsx
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -16,8 +16,9 @@ export default function RegisterAll() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [_error, setError] = useState("");
+const [_loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (!churchId) {
@@ -140,4 +141,4 @@ export default function RegisterAll() {
       </div>
     </div>
   );
-}
+}
