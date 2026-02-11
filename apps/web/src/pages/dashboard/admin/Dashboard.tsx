@@ -1,6 +1,6 @@
 // src/pages/dashboard/AdminDashboard.tsx
 
-import type { useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import axios from "../../../api/axios";
 

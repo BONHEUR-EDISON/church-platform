@@ -1,5 +1,5 @@
 
-import type { useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import api from "../api/axios";
 

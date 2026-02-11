@@ -1,5 +1,5 @@
 
-import type { useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
@@ -7,8 +7,8 @@ import Sidebar from "../../components/dashboard/Sidebar";
 import Topbar from "../../components/dashboard/Topbar";
 import StatsCard from "../../components/dashboard/StatsCard";
 import axios from "../../api/axios";
-import type { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
-import type { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Stats {
   users?: number;
@@ -107,15 +107,15 @@ export default AdminDashboard;
 
 /*// src/pages/dashboard/AdminDashboard.tsx
 
-import type { useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import DashboardLayout from "../../components/dashboard/DashboardLayout";
 import StatsCard from "../../components/dashboard/StatsCard";
 import axios from "../../api/axios";
-import type { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
-import type { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { FaUsers, FaUserShield, FaUserTie } from "react-icons/fa";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 interface Stats {
   users?: number;

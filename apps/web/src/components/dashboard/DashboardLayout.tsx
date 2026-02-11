@@ -9,7 +9,7 @@ import {
   ArrowRightOnRectangleIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import type { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { BellIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

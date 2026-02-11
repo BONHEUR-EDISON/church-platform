@@ -1,7 +1,7 @@
 
-import type { useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
-import type { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "../../api/axios";
 
